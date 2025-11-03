@@ -5,9 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class EmployeeRepository {
+@Component
+public class TasksRepository {
 
     @Autowired
     JdbcTemplate jdbcTemplate;
@@ -22,6 +24,7 @@ public class EmployeeRepository {
                 id
         );
 
+
         if (tasks.isEmpty()) {
             return null;
         }
@@ -30,12 +33,27 @@ public class EmployeeRepository {
 
     }
 
-    public void create(Task e) {
+    public void create(Task t) {
         this.jdbcTemplate.update(
-                "insert into employees(id, name, role) values (?, ?, ?)",
-                e.getId(),
-                e.getName(),
-                e.getDescription()
+                "insert into tasks(name, description) values (?, ?)",
+                t.getName(),
+                t.getDescription()
+        );
+    }
+
+    public void update(Task t) {
+        this.jdbcTemplate.update(
+                "update tasks set name = ?, description = ? where id = ?",
+                t.getName(),
+                t.getDescription(),
+                t.getId()
+        );
+    }
+
+    public void deleteById(Long id) {
+        this.jdbcTemplate.update(
+                "delete from tasks where id = ?",
+                id
         );
     }
 }

@@ -1,46 +1,35 @@
 package com.example.demo.controllers;
 
 import com.example.demo.models.Task;
+import com.example.demo.repos.TasksRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
 @RestController
 @RequestMapping("/tasks")
 
 public class TasksController {
-    private Map<Long, Task> Tasks;
-
-    public TasksController() {
-        this.Tasks = new HashMap<>();
-    }
-
-    public Map<Long, Task> getTasks() {
-        return this.Tasks;
-    }
+    @Autowired
+    private TasksRepository taskRepository;
 
     @GetMapping("/{id}")
     public ResponseEntity<Task> getById (@PathVariable Long id) {
-        if(!this.Tasks.containsKey(id)) {
+        Task t = taskRepository.getById(id);
+
+        if(t == null) {
             return ResponseEntity.notFound().build();
         }
-
-        Task t = this.Tasks.get(id);
 
         return ResponseEntity.ok().body(t);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-        if(!this.Tasks.containsKey(id)) {
-            return ResponseEntity.notFound().build();
-        }
 
-        Tasks.remove(id);
+        taskRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
     }
@@ -48,11 +37,11 @@ public class TasksController {
     @PutMapping("/{id}")
     public ResponseEntity<Task> putById (@RequestBody Task updatedTask) {
         Long id = updatedTask.getId();
-        if (!this.Tasks.containsKey(id)) {
+        if (taskRepository.getById(id) == null) {
             return ResponseEntity.notFound().build();
         }
 
-        Tasks.put(id, updatedTask);
+        taskRepository.update(updatedTask);
 
         return ResponseEntity.noContent().build();
     }
@@ -63,12 +52,8 @@ public class TasksController {
             return ResponseEntity.badRequest().build();
         }
 
-        Long id = newTask.getId();
-        if(this.Tasks.containsKey(id)) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).build();
-        }
+        taskRepository.create(newTask);
 
-        this.Tasks.put(id, newTask);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
