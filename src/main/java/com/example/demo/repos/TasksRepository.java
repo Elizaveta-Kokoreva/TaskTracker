@@ -1,5 +1,6 @@
 package com.example.demo.repos;
 
+import com.example.demo.models.Filter;
 import com.example.demo.models.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,24 +21,40 @@ public class TasksRepository {
                 (rs, rowNum) -> new Task(
                         rs.getLong("id"),
                         rs.getString("name"),
-                        rs.getString("description")),
+                        rs.getString("description"),
+                        rs.getString("status"),
+                        rs.getLong("assignee")),
                 id
         );
-
 
         if (tasks.isEmpty()) {
             return null;
         }
 
-        return tasks.get(0);
-
+        return tasks.getFirst();
     }
 
     public void create(Task t) {
         this.jdbcTemplate.update(
-                "insert into tasks(name, description) values (?, ?)",
+                "insert into tasks(name, description, status, assignee) values (?, ?, ?, ?)",
                 t.getName(),
-                t.getDescription()
+                t.getDescription(),
+                t.getStatus(),
+                t.getAssignee()
+        );
+    }
+
+//    public List<Task> getByFilter(Filter filter) {
+//        this.jdbcTemplate.query("select * from tasks where id = ?"
+//
+//        );
+//    }
+
+
+    public void deleteById(Long id) {
+        this.jdbcTemplate.update(
+                "delete from tasks where id = ?",
+                id
         );
     }
 
@@ -47,13 +64,6 @@ public class TasksRepository {
                 t.getName(),
                 t.getDescription(),
                 t.getId()
-        );
-    }
-
-    public void deleteById(Long id) {
-        this.jdbcTemplate.update(
-                "delete from tasks where id = ?",
-                id
         );
     }
 }

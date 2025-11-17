@@ -1,10 +1,15 @@
 package com.example.demo.models;
 
-public class Users {
+public class User {
     private Long id;
     private String name;
 
-    public Users(){}
+    public User(){}
+
+    public User(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
@@ -20,6 +25,10 @@ public class Users {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String toString() {
+        return "User{" + "id=" + this.id + ", name='" + this.name + '\'' + '}';
     }
 
 }
