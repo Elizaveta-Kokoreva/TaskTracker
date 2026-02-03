@@ -4,12 +4,16 @@ public class Task {
     private Long id;
     private String name;
     private String description;
-    private String status;
+    public enum Status {
+        NEW,
+        IN_PROGRESS,
+        DONE
+    }
     private Long assignee;
 
     public Task() {};
 
-    public Task(Long id, String name, String description, String status, Long assignee) {
+    public Task(Long id, String name, String description, Status status, Long assignee) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -38,10 +42,10 @@ public class Task {
         this.description = description;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

@@ -2,9 +2,8 @@ package com.example.demo.models;
 
 public class Filter {
     private String name;
-    private String status;
+    Status status;
     private String assignee;
-    private String logicalConnection;
 
     public Filter() {
     }
@@ -13,11 +12,7 @@ public class Filter {
         return name;
     }
 
-    public String getLogicalConnection() {
-        return logicalConnection;
-    }
-
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
@@ -29,16 +24,12 @@ public class Filter {
         this.name = name;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
     public void setAssignee(String assignee) {
         this.assignee = assignee;
-    }
-
-    public void setLogicalConnection(String logicalConnection) {
-        this.logicalConnection = logicalConnection;
     }
 
 }

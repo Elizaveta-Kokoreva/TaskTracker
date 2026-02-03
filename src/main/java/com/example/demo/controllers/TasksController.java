@@ -32,14 +32,9 @@ public class TasksController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createTask(@RequestBody Task newTask) {
-        Boolean isCreate = tasksService.createTask(newTask);
-
-        if(!isCreate) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+    public ResponseEntity<Long> createTask(@RequestBody Task newTask) {
+        Long id = tasksService.createTask(newTask);
+        return ResponseEntity.status(HttpStatus.CREATED).body(id);
     }
 
 //    @PostMapping("/getTaskByFilter")
@@ -49,26 +44,11 @@ public class TasksController {
 //        return ResponseEntity.ok().build();
 //    }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-
-        Boolean isDelete = tasksService.deleteById(id);
-        if (isDelete) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.notFound().build();
-    }
-
     @PutMapping("/{id}")
     public ResponseEntity<Task> putById (@RequestBody Task updatedTask) {
 
-        Boolean isPut = tasksService.putById(updatedTask);
-        if (isPut) {
-            return ResponseEntity.noContent().build();
-        }
-
-        return ResponseEntity.notFound().build();
+        tasksService.updateById(updatedTask);
+        return ResponseEntity.noContent().build();
     }
 
 

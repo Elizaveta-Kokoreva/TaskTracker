@@ -1,6 +1,9 @@
 package com.example.demo.services;
 
+import com.example.demo.exeptions.TaskIncorrectDataException;
+import com.example.demo.exeptions.TaskNotFoundException;
 import com.example.demo.models.Filter;
+import com.example.demo.models.Status;
 import com.example.demo.models.Task;
 import com.example.demo.repos.TasksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,33 +26,27 @@ public class TasksService {
         return tasksRepository.getById(id);
     }
 
-    public Boolean createTask(Task newTask) {
+    public Long createTask(Task newTask) {
         if (newTask.getName() == null) {
-            return Boolean.FALSE;
+            throw new TaskIncorrectDataException("Name is empty");
         }
 
         if (newTask.getStatus() == null) {
-            newTask.setStatus("New");
+            newTask.setStatus(Status.NEW);
         }
 
         if (!Objects.equals(newTask.getStatus(), "new") &&
                 !Objects.equals(newTask.getStatus(), "in progress") &&
                 !Objects.equals(newTask.getStatus(), "done")) {
-            return Boolean.FALSE;
+            throw new TaskIncorrectDataException("Wrong status");
         }
 
-        if (tasksRepository.getById(newTask.getAssignee()) != null &&
+        if (newTask.getAssignee() != null &&
                 usersService.getById(newTask.getAssignee()) == null) {
-            return Boolean.FALSE;
+            throw new TaskIncorrectDataException("User Not Found");
         }
 
-//        if (!getByFilter().isEmpty()) {
-//            return Boolean.FALSE;
-//        }
-
-        tasksRepository.create(newTask);
-
-        return Boolean.TRUE;
+        return tasksRepository.create(newTask);
     }
 
 //    public List<Task> getTaskByFilter(Filter filter) {
@@ -63,25 +60,15 @@ public class TasksService {
 //        return t;
 //    }
 
-    public Boolean deleteById(Long id) {
-
-        if (getById(id) != null) {
-            tasksRepository.deleteById(id);
-            return Boolean.TRUE;
-        }
-        return Boolean.FALSE;
-
-    }
-
-    public Boolean putById (Task updatedTask) {
+    public void updateById (Task updatedTask) {
 
         Long id = updatedTask.getId();
         if (tasksRepository.getById(id) == null) {
-            return Boolean.FALSE;
+            throw new TaskNotFoundException();
         }
 
         if (updatedTask.getName() == null) {
-            return Boolean.FALSE;
+            throw new TaskIncorrectDataException("Name is empty");
         }
 
         if(updatedTask.getStatus() == null) {
@@ -91,16 +78,14 @@ public class TasksService {
         if (!Objects.equals(updatedTask.getStatus(), "new") &&
                 !Objects.equals(updatedTask.getStatus(), "in progress") &&
                 !Objects.equals(updatedTask.getStatus(), "done")) {
-            return Boolean.FALSE;
+            throw new TaskIncorrectDataException("Wrong status");
         }
 
-        if (tasksRepository.getById(updatedTask.getAssignee()) != null &&
+        if (updatedTask.getAssignee() != null &&
                 usersService.getById(updatedTask.getAssignee()) == null) {
-            return Boolean.FALSE;
+            throw new TaskIncorrectDataException("User Not Found");
         }
 
         tasksRepository.update(updatedTask);
-
-        return Boolean.TRUE;
     }
 }
