@@ -4,11 +4,7 @@ public class Task {
     private Long id;
     private String name;
     private String description;
-    public enum Status {
-        NEW,
-        IN_PROGRESS,
-        DONE
-    }
+    private Status status;
     private Long assignee;
 
     public Task() {};

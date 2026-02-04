@@ -1,6 +1,7 @@
 package com.example.demo.repos;
 
 import com.example.demo.models.Filter;
+import com.example.demo.models.Status;
 import com.example.demo.models.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,7 +28,7 @@ public class TasksRepository {
                         rs.getLong("id"),
                         rs.getString("name"),
                         rs.getString("description"),
-                        Task.Status.valueOf(rs.getString("status")),
+                        Status.valueOf(rs.getString("status")),
                         rs.getLong("assignee")),
                 id
         );
@@ -49,18 +50,41 @@ public class TasksRepository {
             );
             ps.setString(1, t.getName());
             ps.setString(2, t.getDescription());
-            ps.setString(3, t.getStatus());
+            ps.setString(3, t.getStatus().name());
             ps.setLong(4, t.getAssignee());
             return ps;
         }, keyHolder);
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
 
-//    public List<Task> getByFilter(Filter filter) {
-//        this.jdbcTemplate.query("select * from tasks where id = ?"
-//
-//        );
-//    }
+    public List<Task> getByFilter(Filter filter) {
+        String sql = "select * from tasks WHERE 1 = 1";
+        List<Object> params = new ArrayList<>();
+
+        if (filter.getName() != null && !filter.getName().isBlank()) {
+            sql += " AND name ILIKE '%' || ? || '%'";
+            params.add(filter.getName());
+        }
+
+        if (filter.getStatus() != null) {
+            sql += " AND status = ?";
+            params.add(filter.getStatus().name());
+        }
+
+        if (filter.getAssignee() != null && !filter.getAssignee().isBlank()) {
+            sql += " AND assignee = ?";
+        }
+
+        List<Task> tasks = this.jdbcTemplate.query(sql, (rs, rowNum) -> new Task(
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        Status.valueOf(rs.getString("status")),
+                        rs.getLong("assignee")),
+                params.toArray());
+        return tasks;
+    }
+
 
 
     public void update(Task t) {

@@ -2,7 +2,6 @@ package com.example.demo.controllers;
 
 import com.example.demo.models.Filter;
 import com.example.demo.models.Task;
-import com.example.demo.repos.TasksRepository;
 import com.example.demo.services.TasksService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,10 +23,6 @@ public class TasksController {
     public ResponseEntity<Task> getById (@PathVariable Long id) {
         Task t = tasksService.getById(id);
 
-        if(t == null) {
-            return ResponseEntity.notFound().build();
-        }
-
         return ResponseEntity.ok().body(t);
     }
 
@@ -37,12 +32,11 @@ public class TasksController {
         return ResponseEntity.status(HttpStatus.CREATED).body(id);
     }
 
-//    @PostMapping("/getTaskByFilter")
-//    public ResponseEntity<List<Task>> getTaskByFilter(@RequestBody Filter newFilter) {
-//        List<Task> t = TasksRepository.getByFilter(newFilter);
-//
-//        return ResponseEntity.ok().build();
-//    }
+    @PostMapping("getTaskByFilter")
+    public ResponseEntity<List<Task>> getTaskByFilter(@RequestBody Filter filter) {
+        List<Task> t = tasksService.getTaskByFilter(filter);
+        return ResponseEntity.ok().build();
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Task> putById (@RequestBody Task updatedTask) {

@@ -3,6 +3,7 @@ package com.example.demo.controllers;
 import com.example.demo.exeptions.TaskIncorrectDataException;
 import com.example.demo.exeptions.TaskNotFoundException;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -18,5 +19,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleNotFound() {
         return ResponseEntity.notFound().build();
     }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Void> handleBadJson(HttpMessageNotReadableException e) {
+        return ResponseEntity.badRequest().build();
+    }
+
+
 }
 

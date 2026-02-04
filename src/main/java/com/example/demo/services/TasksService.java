@@ -7,10 +7,6 @@ import com.example.demo.models.Status;
 import com.example.demo.models.Task;
 import com.example.demo.repos.TasksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +19,11 @@ public class TasksService {
     private UsersService usersService;
 
     public Task getById(Long id) {
-        return tasksRepository.getById(id);
+        Task task =  tasksRepository.getById(id);
+        if (task == null) {
+            throw new TaskNotFoundException("Task not found");
+        }
+        return task;
     }
 
     public Long createTask(Task newTask) {
@@ -35,12 +35,6 @@ public class TasksService {
             newTask.setStatus(Status.NEW);
         }
 
-        if (!Objects.equals(newTask.getStatus(), "new") &&
-                !Objects.equals(newTask.getStatus(), "in progress") &&
-                !Objects.equals(newTask.getStatus(), "done")) {
-            throw new TaskIncorrectDataException("Wrong status");
-        }
-
         if (newTask.getAssignee() != null &&
                 usersService.getById(newTask.getAssignee()) == null) {
             throw new TaskIncorrectDataException("User Not Found");
@@ -49,22 +43,20 @@ public class TasksService {
         return tasksRepository.create(newTask);
     }
 
-//    public List<Task> getTaskByFilter(Filter filter) {
-//
-//        if (!Objects.equals(filter.getLogicalConnection(), "AND") &&
-//                !Objects.equals(filter.getLogicalConnection(), "OR")) {
-//
-//        }
-//        List<Task> t = tasksService.getByFilter(newFilter);
-//
-//        return t;
-//    }
+    public List<Task> getTaskByFilter(Filter filter) {
+
+        List<Task> t = tasksRepository.getByFilter(filter);
+        if (t.isEmpty()) {
+            throw new TaskNotFoundException("Tasks not found");
+        }
+        return t;
+    }
 
     public void updateById (Task updatedTask) {
 
         Long id = updatedTask.getId();
         if (tasksRepository.getById(id) == null) {
-            throw new TaskNotFoundException();
+            throw new TaskNotFoundException("Task not found");
         }
 
         if (updatedTask.getName() == null) {
@@ -72,13 +64,7 @@ public class TasksService {
         }
 
         if(updatedTask.getStatus() == null) {
-            updatedTask.setStatus("new");
-        }
-
-        if (!Objects.equals(updatedTask.getStatus(), "new") &&
-                !Objects.equals(updatedTask.getStatus(), "in progress") &&
-                !Objects.equals(updatedTask.getStatus(), "done")) {
-            throw new TaskIncorrectDataException("Wrong status");
+            updatedTask.setStatus(Status.NEW);
         }
 
         if (updatedTask.getAssignee() != null &&
