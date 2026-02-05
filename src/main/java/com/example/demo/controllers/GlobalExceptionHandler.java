@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(TaskIncorrectDataException.class)
-    public ResponseEntity<String> handleNotFound(TaskIncorrectDataException e) {
+    public ResponseEntity<String> handleIncorrectData(TaskIncorrectDataException e) {
         return ResponseEntity.badRequest().body(e.getMessage());
     }
 

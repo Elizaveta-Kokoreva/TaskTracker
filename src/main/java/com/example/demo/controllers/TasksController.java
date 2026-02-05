@@ -35,7 +35,7 @@ public class TasksController {
     @PostMapping("getTaskByFilter")
     public ResponseEntity<List<Task>> getTaskByFilter(@RequestBody Filter filter) {
         List<Task> t = tasksService.getTaskByFilter(filter);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(t);
     }
 
     @PutMapping("/{id}")
