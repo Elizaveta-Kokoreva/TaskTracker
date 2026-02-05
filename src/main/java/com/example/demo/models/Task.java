@@ -4,13 +4,17 @@ public class Task {
     private Long id;
     private String name;
     private String description;
+    private Status status;
+    private Long assignee;
 
     public Task() {};
 
-    public Task(Long id, String name, String description) {
+    public Task(Long id, String name, String description, Status status, Long assignee) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.status = status;
+        this.assignee = assignee;
     }
 
     public Long getId() {
@@ -34,8 +38,18 @@ public class Task {
         this.description = description;
     }
 
-    public String toString() {
-        return "Task{" + "id=" + this.id + ", name='" + this.name + '\'' + ", description='" + this.description + '\'' + '}';
+    public Status getStatus() {
+        return status;
+    }
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Long getAssignee() {
+        return assignee;
+    }
+    public void setAssignee(Long assignee) {
+        this.assignee = assignee;
     }
 
 }

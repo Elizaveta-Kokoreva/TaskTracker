@@ -1,12 +1,19 @@
 package com.example.demo.repos;
 
+import com.example.demo.models.Filter;
+import com.example.demo.models.Status;
 import com.example.demo.models.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class TasksRepository {
@@ -20,26 +27,65 @@ public class TasksRepository {
                 (rs, rowNum) -> new Task(
                         rs.getLong("id"),
                         rs.getString("name"),
-                        rs.getString("description")),
+                        rs.getString("description"),
+                        Status.valueOf(rs.getString("status")),
+                        rs.getLong("assignee")),
                 id
         );
-
 
         if (tasks.isEmpty()) {
             return null;
         }
 
-        return tasks.get(0);
-
+        return tasks.getFirst();
     }
 
-    public void create(Task t) {
-        this.jdbcTemplate.update(
-                "insert into tasks(name, description) values (?, ?)",
-                t.getName(),
-                t.getDescription()
-        );
+    public Long create(Task t) {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        this.jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO tasks (name, description, status, assignee) " +
+                            "VALUES (?, ?, ?, ?) RETURNING id",
+                    Statement.RETURN_GENERATED_KEYS
+            );
+            ps.setString(1, t.getName());
+            ps.setString(2, t.getDescription());
+            ps.setString(3, t.getStatus().name());
+            ps.setLong(4, t.getAssignee());
+            return ps;
+        }, keyHolder);
+        return Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
+
+    public List<Task> getByFilter(Filter filter) {
+        String sql = "select * from tasks WHERE 1 = 1";
+        List<Object> params = new ArrayList<>();
+
+        if (filter.getName() != null && !filter.getName().isBlank()) {
+            sql += " AND name ILIKE '%' || ? || '%'";
+            params.add(filter.getName());
+        }
+
+        if (filter.getStatus() != null) {
+            sql += " AND status = ?";
+            params.add(filter.getStatus().name());
+        }
+
+        if (filter.getAssignee() != null && !filter.getAssignee().isBlank()) {
+            sql += " AND assignee = ?";
+        }
+
+        List<Task> tasks = this.jdbcTemplate.query(sql, (rs, rowNum) -> new Task(
+                        rs.getLong("id"),
+                        rs.getString("name"),
+                        rs.getString("description"),
+                        Status.valueOf(rs.getString("status")),
+                        rs.getLong("assignee")),
+                params.toArray());
+        return tasks;
+    }
+
+
 
     public void update(Task t) {
         this.jdbcTemplate.update(
@@ -49,11 +95,5 @@ public class TasksRepository {
                 t.getId()
         );
     }
-
-    public void deleteById(Long id) {
-        this.jdbcTemplate.update(
-                "delete from tasks where id = ?",
-                id
-        );
-    }
 }
+
