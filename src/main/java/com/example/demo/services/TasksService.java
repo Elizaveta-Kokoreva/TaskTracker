@@ -7,10 +7,12 @@ import com.example.demo.models.Status;
 import com.example.demo.models.Task;
 import com.example.demo.repos.TasksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
+@Service
 public class TasksService {
     @Autowired
     private TasksRepository tasksRepository;
@@ -46,7 +48,7 @@ public class TasksService {
     public List<Task> getTaskByFilter(Filter filter) {
 
         List<Task> t = tasksRepository.getByFilter(filter);
-        if (t.isEmpty()) {
+        if (t == null) {
             throw new TaskNotFoundException("Tasks not found");
         }
         return t;
