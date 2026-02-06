@@ -32,7 +32,7 @@ public class TasksController {
         return ResponseEntity.status(HttpStatus.CREATED).body(id);
     }
 
-    @PostMapping("getTaskByFilter")
+    @PostMapping("/getTaskByFilter")
     public ResponseEntity<List<Task>> getTaskByFilter(@RequestBody Filter filter) {
         List<Task> t = tasksService.getTaskByFilter(filter);
         return ResponseEntity.ok().body(t);
