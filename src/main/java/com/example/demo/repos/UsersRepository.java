@@ -3,9 +3,11 @@ package com.example.demo.repos;
 import com.example.demo.models.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
 public class UsersRepository {
     @Autowired
     JdbcTemplate jdbcTemplate;
