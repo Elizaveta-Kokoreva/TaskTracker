@@ -29,7 +29,7 @@ public class TasksService {
     }
 
     public Long createTask(Task newTask) {
-        if (newTask.getName() == null) {
+        if (newTask.getName() == null || newTask.getName().isBlank()) {
             throw new TaskIncorrectDataException("Name is empty");
         }
 
@@ -48,20 +48,19 @@ public class TasksService {
     public List<Task> getTaskByFilter(Filter filter) {
 
         List<Task> t = tasksRepository.getByFilter(filter);
-        if (t == null) {
+        if (t.isEmpty()) {
             throw new TaskNotFoundException("Tasks not found");
         }
         return t;
     }
 
-    public void updateById (Task updatedTask) {
+    public void updateById (Long id, Task updatedTask) {
 
-        Long id = updatedTask.getId();
         if (tasksRepository.getById(id) == null) {
             throw new TaskNotFoundException("Task not found");
         }
 
-        if (updatedTask.getName() == null) {
+        if (updatedTask.getName() == null || updatedTask.getName().isBlank()) {
             throw new TaskIncorrectDataException("Name is empty");
         }
 
@@ -74,6 +73,6 @@ public class TasksService {
             throw new TaskIncorrectDataException("User Not Found");
         }
 
-        tasksRepository.update(updatedTask);
+        tasksRepository.update(id, updatedTask);
     }
 }

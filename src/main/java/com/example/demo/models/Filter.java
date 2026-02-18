@@ -3,7 +3,7 @@ package com.example.demo.models;
 public class Filter {
     private String name;
     Status status;
-    private String assignee;
+    private Long assignee;
 
     public Filter() {
     }
@@ -16,7 +16,7 @@ public class Filter {
         return status;
     }
 
-    public String getAssignee() {
+    public Long getAssignee() {
         return assignee;
     }
 
@@ -28,7 +28,7 @@ public class Filter {
         this.status = status;
     }
 
-    public void setAssignee(String assignee) {
+    public void setAssignee(Long assignee) {
         this.assignee = assignee;
     }
 

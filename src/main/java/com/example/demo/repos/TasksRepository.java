@@ -71,8 +71,9 @@ public class TasksRepository {
             params.add(filter.getStatus().name());
         }
 
-        if (filter.getAssignee() != null && !filter.getAssignee().isBlank()) {
+        if (filter.getAssignee() != null) {
             sql += " AND assignee = ?";
+            params.add(filter.getAssignee());
         }
 
         List<Task> tasks = this.jdbcTemplate.query(sql, (rs, rowNum) -> new Task(
@@ -87,12 +88,14 @@ public class TasksRepository {
 
 
 
-    public void update(Task t) {
+    public void update(Long id, Task t) {
         this.jdbcTemplate.update(
-                "update tasks set name = ?, description = ? where id = ?",
+                "update tasks set name = ?, description = ?, status = ?, assignee = ? where id = ?",
                 t.getName(),
                 t.getDescription(),
-                t.getId()
+                t.getStatus().name(),
+                t.getAssignee(),
+                id
         );
     }
 }
