@@ -39,9 +39,9 @@ public class TasksController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> putById (@RequestBody Task updatedTask) {
+    public ResponseEntity<Task> putById (@PathVariable Long id, @RequestBody Task updatedTask) {
 
-        tasksService.updateById(updatedTask);
+        tasksService.updateById(id, updatedTask);
         return ResponseEntity.noContent().build();
     }
 

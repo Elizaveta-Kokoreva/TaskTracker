@@ -14,7 +14,6 @@ public class getByIDTest extends BaseIntegrationTest{
         mockMvc.perform(get("/tasks/{id}", 1)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                // поля из холста
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.name").value("a"))

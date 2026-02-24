@@ -18,9 +18,41 @@ public class getByFilterTest extends BaseIntegrationTest {
                         .content(emptyFilter))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                // предполагаем, что возвращается массив задач
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$.length()").value(3));
     }
 
+
+    @Test
+    void GetTaskByFilterReturn404_WhenNoTasksMatch() throws Exception {
+        String filter = """
+                {
+                  "name": "filter"
+                }
+                """;
+
+        mockMvc.perform(post("/tasks/getTaskByFilter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(filter))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void TestGetTaskByFilterReturn200_WhenMultipleTasksMatch() throws Exception {
+        String emptyFilter = """
+                {
+                  "assignee": "1"
+                }
+                """;
+
+        mockMvc.perform(post("/tasks/getTaskByFilter")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .content(emptyFilter))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.length()").value(2));
+    }
 }
