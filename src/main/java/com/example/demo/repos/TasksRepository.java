@@ -71,9 +71,9 @@ public class TasksRepository {
             params.add(filter.getStatus().name());
         }
 
-        if (filter.getAssignee() != null) {
+        if (filter.getAssigneeID() != null) {
             sql += " AND assignee = ?";
-            params.add(filter.getAssignee());
+            params.add(filter.getAssigneeID());
         }
 
         List<Task> tasks = this.jdbcTemplate.query(sql, (rs, rowNum) -> new Task(
