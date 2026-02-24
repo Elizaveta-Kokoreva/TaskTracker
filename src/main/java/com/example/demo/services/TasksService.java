@@ -5,12 +5,11 @@ import com.example.demo.exeptions.TaskNotFoundException;
 import com.example.demo.models.Filter;
 import com.example.demo.models.Status;
 import com.example.demo.models.Task;
-import com.example.demo.repos.TasksRepository;
+import com.example.demo.repositories.TasksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class TasksService {
